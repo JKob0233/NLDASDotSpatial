@@ -113,31 +113,30 @@ namespace DotSpatTopology
             
             MapPolygonLayer polylayer = (MapPolygonLayer)map1.Layers[0];
             MapPolygonLayer gridlayer = (MapPolygonLayer)map1.Layers[1];
-            IFeatureSet feats = (IFeatureSet)gridlayer.DataSet;
-            IFeatureSet polyfeats = (IFeatureSet)polylayer.DataSet;
             
             gridlayer.UnSelectAll();
             int iShape = 0;
+            double interArea = 0.0;
             foreach (GeoAPI.Geometries.IGeometry s in squares)
             {
                 if (s.Intersects(xp))
                 {
+                    squareArea = s.Area;
                     gridlayer.Select(iShape);
                     foreach (GeoAPI.Geometries.IGeometry p in polys)
                     {
                         if (p.Intersects(s))
                         {
                             GeoAPI.Geometries.IGeometry intersection = p.Intersection(s);
-                            squareArea = s.Area;
-                            double interArea = intersection.Area;
-                            double percent = (interArea / squareArea) * 100;
-                            label2.Text = "Area of square: " + squareArea.ToString() + "\r\nArea of polygon in selected square: " + interArea.ToString() + "\r\nPortion of polygon covers " + percent.ToString() + "% of this square.";
+                            interArea += intersection.Area;
                         }
                     }
                 }
                 iShape++;
             }
-            
+            double percent = (interArea / squareArea) * 100;
+            label2.Text = "Area of square: " + squareArea.ToString() + "\r\nArea of polygon in selected square: " + interArea.ToString() + "\r\nPortion of polygon covers " + percent.ToString() + "% of this square.";
+
             switch (shapeType)
             {
                 case "Point":
