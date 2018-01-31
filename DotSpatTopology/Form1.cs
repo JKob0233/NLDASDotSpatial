@@ -13,6 +13,7 @@ using DotSpatial.Data;
 using DotSpatial.Symbology;
 using DotSpatial.Topology;
 using NetTopologySuite.IO;
+using System.Diagnostics;
 
 namespace DotSpatTopology
 {
@@ -23,12 +24,13 @@ namespace DotSpatTopology
         double polygonArea = 0;
         ArrayList polys = new ArrayList();
         ArrayList squares = new ArrayList();
+        ArrayList overlap = new ArrayList();
         public Form1()
         {
             InitializeComponent();
             map1.FunctionMode = FunctionMode.Pan;
-            string gridfile = "..\\..\\..\\NLDAS\\NLDAS_Grid_Reference.shp";
-            string polyfile = "..\\..\\..\\lake\\Lake_St._Clair_Shoreline.shp";
+            string gridfile = "NLDAS_Grid_Reference.shp";
+            string polyfile = "..\\..\\..\\tests\\Lake_St._Clair_Shoreline.shp";//"..\\..\\..\\tests\\Catchment.shp";
             map1.AddLayer(polyfile);
             map1.AddLayer(gridfile);
             MapPolygonLayer polylayer = (MapPolygonLayer)map1.Layers[0];
@@ -36,30 +38,40 @@ namespace DotSpatTopology
             MapPolygonLayer gridlayer = (MapPolygonLayer)map1.Layers[1];
             gridlayer.Symbolizer = new PolygonSymbolizer(Color.FromArgb(0, Color.White), Color.Black);
 
+            //Read geometries from both shapefiles and store in array lists
+            //As well as calculate shapefile areas ahead of time
             ShapefileDataReader reader = new ShapefileDataReader(polyfile, NetTopologySuite.Geometries.GeometryFactory.Default);
             while (reader.Read())
             {
                 polys.Add(reader.Geometry);
+                polygonArea += reader.Geometry.Area;
             }
 
             ShapefileDataReader reader2 = new ShapefileDataReader(gridfile, NetTopologySuite.Geometries.GeometryFactory.Default);
             while (reader2.Read())
             {
                 squares.Add(reader2.Geometry);
+                gridArea += reader2.Geometry.Area;
             }
+
             squares.TrimToSize();
             polys.TrimToSize();
 
-            foreach (NetTopologySuite.Geometries.Polygon s in squares)
+            ///Creating intersections ahead of time to make selections faster at runtime
+            foreach (GeoAPI.Geometries.IGeometry s in squares)
             {
-                gridArea += s.Area;
+                foreach (GeoAPI.Geometries.IGeometry p in polys)
+                {
+                    if (p.Intersects(s) && !overlap.Contains(s))
+                    {
+                        overlap.Add(s);
+                    }
+                }
             }
+            overlap.TrimToSize();
+            ///
+            
             label4.Text = "Area of NLDAS Grid: " + gridArea.ToString();
-
-            foreach (NetTopologySuite.Geometries.Polygon p in polys)
-            {
-                polygonArea += p.Area;
-            }
             label4.Text += "\r\nArea of polygon: " + polygonArea.ToString();
             double percent = (polygonArea / gridArea) * 100;
             label4.Text += "\r\nPolygon covers " + percent.ToString() + "% of NLDAS Grid.";
@@ -107,16 +119,40 @@ namespace DotSpatTopology
 
         private void map1_MouseDown(object sender, MouseEventArgs e)
         {
+            Stopwatch timer = new Stopwatch();
+            timer.Start();
+
             Coordinate mousept = map1.PixelToProj(e.Location);
             NetTopologySuite.Geometries.Point xp = new NetTopologySuite.Geometries.Point(mousept.X, mousept.Y);
             label2.Text = xp.ToString();
-            
+
             MapPolygonLayer polylayer = (MapPolygonLayer)map1.Layers[0];
             MapPolygonLayer gridlayer = (MapPolygonLayer)map1.Layers[1];
-            
+
+            //Iterate through NLDAS grid and determine if it intersects a polygon at selected region
             gridlayer.UnSelectAll();
-            int iShape = 0;
             double interArea = 0.0;
+            
+            foreach (GeoAPI.Geometries.IGeometry s in overlap)
+            {
+                if (s.Intersects(xp))
+                {
+                    squareArea = s.Area;
+                    foreach (GeoAPI.Geometries.IGeometry p in polys)
+                    {
+                        if (p.Intersects(s))
+                        {
+                            GeoAPI.Geometries.IGeometry intersection = p.Intersection(s);
+                            interArea += intersection.Area;
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+            /*
+            /// slightly slower implementation, but provides visual selection.
+            int iShape = 0; 
             foreach (GeoAPI.Geometries.IGeometry s in squares)
             {
                 if (s.Intersects(xp))
@@ -129,13 +165,21 @@ namespace DotSpatTopology
                         {
                             GeoAPI.Geometries.IGeometry intersection = p.Intersection(s);
                             interArea += intersection.Area;
+                            break;
                         }
                     }
+                    break;
                 }
                 iShape++;
-            }
+            }//*/
+
             double percent = (interArea / squareArea) * 100;
             label2.Text = "Area of square: " + squareArea.ToString() + "\r\nArea of polygon in selected square: " + interArea.ToString() + "\r\nPortion of polygon covers " + percent.ToString() + "% of this square.";
+
+            timer.Stop();
+            TimeSpan ts = timer.Elapsed;
+            string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}", ts.Hours, ts.Minutes, ts.Seconds, ts.Milliseconds / 10);
+            Console.WriteLine("RunTime " + elapsedTime);
 
             switch (shapeType)
             {
@@ -228,7 +272,7 @@ namespace DotSpatTopology
                     }
                     break;
                 case "polygon":
-                    
+
                     if (e.Button == MouseButtons.Left)
                     {
                         //left click - fill array of coordinates
@@ -405,7 +449,7 @@ namespace DotSpatTopology
 
         private void savePolygonShapefileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            polygonF.SaveAs("c:\\MW\\polygon.shp", true);
+            polygonF.SaveAs("..\\..\\..\\tests\\custom.shp", true);
             MessageBox.Show("The polygon shapefile has been saved.");
             map1.Cursor = Cursors.Arrow;
             polygonmouseClick = false;
