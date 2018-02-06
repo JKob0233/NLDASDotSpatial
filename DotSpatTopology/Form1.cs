@@ -124,7 +124,7 @@ namespace DotSpatTopology
 
             Coordinate mousept = map1.PixelToProj(e.Location);
             NetTopologySuite.Geometries.Point xp = new NetTopologySuite.Geometries.Point(mousept.X, mousept.Y);
-            label2.Text = xp.ToString();
+            Console.WriteLine(xp.ToString());
 
             MapPolygonLayer polylayer = (MapPolygonLayer)map1.Layers[0];
             MapPolygonLayer gridlayer = (MapPolygonLayer)map1.Layers[1];
@@ -150,7 +150,8 @@ namespace DotSpatTopology
                     break;
                 }
             }
-            /*
+
+            /**
             /// slightly slower implementation, but provides visual selection.
             int iShape = 0; 
             foreach (GeoAPI.Geometries.IGeometry s in squares)
@@ -171,7 +172,7 @@ namespace DotSpatTopology
                     break;
                 }
                 iShape++;
-            }//*/
+            }**/
 
             double percent = (interArea / squareArea) * 100;
             label2.Text = "Area of square: " + squareArea.ToString() + "\r\nArea of polygon in selected square: " + interArea.ToString() + "\r\nPortion of polygon covers " + percent.ToString() + "% of this square.";
@@ -649,25 +650,10 @@ namespace DotSpatTopology
             frm.Show();
 
         }
-
-        private void map1_Load(object sender, EventArgs e)
+                
+        private void Form1_Load(object sender, EventArgs e)
         {
-
-        }
-
-        private void label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void dgvAttributeTable_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
+            
         }
     }
 }

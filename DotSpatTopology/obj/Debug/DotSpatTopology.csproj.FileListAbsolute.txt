@@ -86,3 +86,4 @@ M:\DotSpatTopology\DotSpatTopology\bin\Debug\NetTopologySuite.IO.PostGis.xml
 M:\DotSpatTopology\DotSpatTopology\bin\Debug\NetTopologySuite.IO.ShapeFile.xml
 M:\DotSpatTopology\DotSpatTopology\bin\Debug\NetTopologySuite.IO.ShapeFile.Extended.xml
 M:\DotSpatTopology\DotSpatTopology\bin\Debug\PowerCollections.xml
+M:\DotSpatTopology\DotSpatTopology\bin\Debug\HDF5DotNet.dll

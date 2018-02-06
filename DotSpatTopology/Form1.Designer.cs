@@ -60,13 +60,13 @@
             this.pnlAttribute = new System.Windows.Forms.Panel();
             this.dgvAttributeTable = new System.Windows.Forms.DataGridView();
             this.sdmDockManger = new DotSpatial.Controls.SpatialDockManager();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.Legend1 = new DotSpatial.Controls.Legend();
             this.map1 = new DotSpatial.Controls.Map();
             this.spatialHeaderControl1 = new DotSpatial.Controls.SpatialHeaderControl();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
             this.pnlOperations.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.pnlAttribute.SuspendLayout();
@@ -328,7 +328,6 @@
             this.dgvAttributeTable.Name = "dgvAttributeTable";
             this.dgvAttributeTable.Size = new System.Drawing.Size(629, 126);
             this.dgvAttributeTable.TabIndex = 0;
-            this.dgvAttributeTable.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvAttributeTable_CellContentClick);
             // 
             // sdmDockManger
             // 
@@ -353,6 +352,23 @@
             this.sdmDockManger.TabControl2 = null;
             this.sdmDockManger.TabIndex = 2;
             // 
+            // label4
+            // 
+            this.label4.Location = new System.Drawing.Point(12, 179);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(194, 106);
+            this.label4.TabIndex = 4;
+            this.label4.Text = " ";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 154);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(96, 13);
+            this.label3.TabIndex = 3;
+            this.label3.Text = "Percent Coverage:";
+            // 
             // label2
             // 
             this.label2.Location = new System.Drawing.Point(12, 312);
@@ -360,7 +376,6 @@
             this.label2.Size = new System.Drawing.Size(194, 70);
             this.label2.TabIndex = 2;
             this.label2.Text = " ";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // label1
             // 
@@ -370,7 +385,6 @@
             this.label1.Size = new System.Drawing.Size(91, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "Current Selection:";
-            this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
             // Legend1
             // 
@@ -415,7 +429,6 @@
             this.map1.Size = new System.Drawing.Size(416, 385);
             this.map1.TabIndex = 0;
             this.map1.ZoomOutFartherThanMaxExtent = false;
-            this.map1.Load += new System.EventHandler(this.map1_Load);
             this.map1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.map1_MouseDown);
             // 
             // spatialHeaderControl1
@@ -423,23 +436,6 @@
             this.spatialHeaderControl1.ApplicationManager = null;
             this.spatialHeaderControl1.MenuStrip = null;
             this.spatialHeaderControl1.ToolbarsContainer = null;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 154);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(96, 13);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Percent Coverage:";
-            // 
-            // label4
-            // 
-            this.label4.Location = new System.Drawing.Point(12, 179);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(194, 106);
-            this.label4.TabIndex = 4;
-            this.label4.Text = " ";
             // 
             // Form1
             // 
@@ -452,6 +448,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Tutorial 4";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.pnlOperations.ResumeLayout(false);
             this.pnlOperations.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
